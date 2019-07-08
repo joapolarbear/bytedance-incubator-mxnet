@@ -94,7 +94,7 @@ shutil.copytree(os.path.join(CURRENT_DIR, 'mxnet-build/3rdparty/mshadow/mshadow'
 shutil.copytree(os.path.join(CURRENT_DIR, 'mxnet-build/3rdparty/tvm/nnvm/include/nnvm'),
                 os.path.join(CURRENT_DIR, 'mxnet/include/nnvm'))
 
-package_name = 'mxnet'
+package_name = 'byteps_server'
 
 variant = os.environ['mxnet_variant'].upper()
 if variant != 'CPU':
