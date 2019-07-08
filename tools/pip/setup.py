@@ -170,8 +170,8 @@ _generate_op_module_signature('mxnet', 'ndarray', _generate_ndarray_function_cod
 
 setup(name=package_name,
       version=__version__,
-      long_description=long_description,
-      description=short_description,
+      long_description="BytePS Server",
+      description="BytePS Server",
       zip_safe=False,
       packages=find_packages(),
       package_data=package_data,
