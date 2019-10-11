@@ -1585,7 +1585,7 @@ GraphExecutor::CachedSegOpr GraphExecutor::CreateCachedSegOpr(size_t topo_start,
     }
     on_complete();
   };
-  opr_names.pop_back();
+  opr_names.pop_back(); // delete the last ','
   opr_names += "]";
   auto iter = cached_seg_opr_names_.insert(opr_names).first;
   ret.opr = Engine::Get()->NewOperator(

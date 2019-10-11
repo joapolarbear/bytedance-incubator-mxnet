@@ -438,7 +438,9 @@ inline void PushFCompute(const FCompute& fn,
         rctx.get_stream<gpu>()->Wait();
       }
     }, ctx, read_vars, write_vars, FnProperty::kNormal,
-    0, op->name.c_str());
+    0, 
+    // op->name.c_str());
+    attrs.name.c_str()); // huhanpeng: modified for profiling
 }
 
 inline void PushFComputeEx(const FComputeEx& fn,
@@ -474,7 +476,9 @@ inline void PushFComputeEx(const FComputeEx& fn,
   } else {
     CHECK(exec_type == ExecType::kSync);
     Engine::Get()->PushSync(run, ctx, read_vars, write_vars, FnProperty::kNormal,
-                            0, op->name.c_str());
+                            0, 
+                            // op->name.c_str());
+                            attrs.name.c_str()); // huhanpeng: modified for profiling
   }
 }
 
@@ -526,12 +530,14 @@ inline void PushOperator(const OpStatePtr& state,
       Engine::Get()->PushSync(
           [=](RunContext rctx) { run(rctx, engine::CallbackOnComplete()); },
           ctx, read_vars, write_vars, FnProperty::kNormal, 0,
-          op->name.c_str());
+          // op->name.c_str());
+          attrs.name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(run, ctx, read_vars, write_vars,
                                FnProperty::kAsync, 0,
-                               op->name.c_str());
+                               // op->name.c_str());
+                               attrs.name.c_str()); // huhanpeng: modified for profiling
     }
   } else {
     CHECK(fcompute != nullptr)
@@ -575,12 +581,16 @@ inline void PushOperator(const OpStatePtr& state,
           [=](RunContext rctx) {
             run(rctx, engine::CallbackOnComplete());
           }, ctx, read_vars, write_vars, FnProperty::kNormal,
-          0, op->name.c_str());
+          0, 
+          // op->name.c_str());
+          attrs.name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(
           run, ctx, read_vars, write_vars, FnProperty::kAsync,
-          0, op->name.c_str());
+          0, 
+          // op->name.c_str());
+          attrs.name.c_str()); // huhanpeng: modified for profiling
     }
   }
 }
@@ -906,7 +916,8 @@ inline void SetupOpExec(
 
 inline Engine::OprHandle CreateEngineOp(
     const Context& default_ctx,
-    const std::vector<std::shared_ptr<exec::OpExecutor> >& execs) {
+    const std::vector<std::shared_ptr<exec::OpExecutor> >& execs,
+    const std::string opr_name) {
   CHECK_GT(execs.size(), 0);
   std::vector<Engine::VarHandle> use_vars, mutate_vars;
 
@@ -955,7 +966,7 @@ inline Engine::OprHandle CreateEngineOp(
   };
 
   return Engine::Get()->NewOperator(
-      exec_fun, use_vars, mutate_vars, FnProperty::kNormal);
+      exec_fun, use_vars, mutate_vars, FnProperty::kNormal, opr_name.c_str()); // huhanpeng: add the name, modified for profiling
 }
 
 inline void CreateEngineOpSeg(
@@ -980,12 +991,15 @@ inline void CreateEngineOpSeg(
     // Stop at async nodes and invalid node (due to input/output is not allocated)
     bool stop = is_async || !valid || seg_execs.size() >= bulk_size;
 
+    // huhanpeng: Used to change output names for profiling
+    std::string opr_name = node.source->attrs.name;
+
     // Create opr segment for previous nodes.
     if (stop && nid > seg_start) {
       auto& seg = (*opr_segs)[seg_start];
       if (seg_execs.size()) {
         seg = EngineOprSeg{false, nid};
-        seg.opr.reset(CreateEngineOp(default_ctx, seg_execs));
+        seg.opr.reset(CreateEngineOp(default_ctx, seg_execs, opr_name)); // huhanpeng: modified for profiling
       } else {
         seg = EngineOprSeg{true, nid, nullptr};
       }
@@ -1002,7 +1016,7 @@ inline void CreateEngineOpSeg(
       seg_start = nid + 1;
     } else if (is_async) {
       seg = EngineOprSeg{false, nid + 1};
-      seg.opr.reset(CreateEngineOp(default_ctx, seg_execs));
+      seg.opr.reset(CreateEngineOp(default_ctx, seg_execs, opr_name)); // huhanpeng: modified for profiling
       seg_execs.clear();
       seg_start = nid + 1;
     }
@@ -1012,7 +1026,7 @@ inline void CreateEngineOpSeg(
     auto& seg = (*opr_segs)[seg_start];
     if (seg_execs.size()) {
       seg = EngineOprSeg{false, end_nid};
-      seg.opr.reset(CreateEngineOp(default_ctx, seg_execs));
+      seg.opr.reset(CreateEngineOp(default_ctx, seg_execs, opr_name)); // huhanpeng: modified for profiling
     } else {
       seg = EngineOprSeg{true, end_nid, nullptr};
     }
