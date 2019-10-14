@@ -439,8 +439,8 @@ inline void PushFCompute(const FCompute& fn,
       }
     }, ctx, read_vars, write_vars, FnProperty::kNormal,
     0, 
-    // op->name.c_str());
-    attrs.name.c_str()); // huhanpeng: modified for profiling
+    op->name.c_str());
+    // attrs.name.c_str()); // huhanpeng: modified for profiling
 }
 
 inline void PushFComputeEx(const FComputeEx& fn,
@@ -477,8 +477,8 @@ inline void PushFComputeEx(const FComputeEx& fn,
     CHECK(exec_type == ExecType::kSync);
     Engine::Get()->PushSync(run, ctx, read_vars, write_vars, FnProperty::kNormal,
                             0, 
-                            // op->name.c_str());
-                            attrs.name.c_str()); // huhanpeng: modified for profiling
+                            op->name.c_str());
+                            // attrs.name.c_str()); // huhanpeng: modified for profiling
   }
 }
 
@@ -530,14 +530,14 @@ inline void PushOperator(const OpStatePtr& state,
       Engine::Get()->PushSync(
           [=](RunContext rctx) { run(rctx, engine::CallbackOnComplete()); },
           ctx, read_vars, write_vars, FnProperty::kNormal, 0,
-          // op->name.c_str());
-          attrs.name.c_str()); // huhanpeng: modified for profiling
+          op->name.c_str());
+          // attrs.name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(run, ctx, read_vars, write_vars,
                                FnProperty::kAsync, 0,
-                               // op->name.c_str());
-                               attrs.name.c_str()); // huhanpeng: modified for profiling
+                               op->name.c_str());
+                               // attrs.name.c_str()); // huhanpeng: modified for profiling
     }
   } else {
     CHECK(fcompute != nullptr)
@@ -582,15 +582,15 @@ inline void PushOperator(const OpStatePtr& state,
             run(rctx, engine::CallbackOnComplete());
           }, ctx, read_vars, write_vars, FnProperty::kNormal,
           0, 
-          // op->name.c_str());
-          attrs.name.c_str()); // huhanpeng: modified for profiling
+          op->name.c_str());
+          // attrs.name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(
           run, ctx, read_vars, write_vars, FnProperty::kAsync,
           0, 
-          // op->name.c_str());
-          attrs.name.c_str()); // huhanpeng: modified for profiling
+          op->name.c_str());
+          // attrs.name.c_str()); // huhanpeng: modified for profiling
     }
   }
 }
