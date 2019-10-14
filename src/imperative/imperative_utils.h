@@ -980,6 +980,10 @@ inline void CreateEngineOpSeg(
     std::vector<EngineOprSeg> *opr_segs) {
   size_t seg_start = start_nid;
   std::vector<std::shared_ptr<exec::OpExecutor> > seg_execs;
+
+  // huhanpeng: Used to change output names for profiling
+  std::string opr_name;
+
   for (size_t nid = start_nid; nid < end_nid; ++nid) {
     const auto& node = idx[nid];
     if (node.source->is_variable()) continue;
@@ -991,11 +995,13 @@ inline void CreateEngineOpSeg(
     // Stop at async nodes and invalid node (due to input/output is not allocated)
     bool stop = is_async || !valid || seg_execs.size() >= bulk_size;
 
-    // huhanpeng: Used to change output names for profiling
-    std::string opr_name = node.source->attrs.name;
+    
 
     // Create opr segment for previous nodes.
     if (stop && nid > seg_start) {
+      // huhanpeng:
+      opr_name = idx[seg_start].source->attrs.name;
+      
       auto& seg = (*opr_segs)[seg_start];
       if (seg_execs.size()) {
         seg = EngineOprSeg{false, nid};
@@ -1008,6 +1014,9 @@ inline void CreateEngineOpSeg(
     }
 
     seg_execs.push_back(exec);
+
+    // huhanpeng:
+    opr_name = node.source->attrs.name;
 
     auto& seg = (*opr_segs)[nid];
     if (!valid) {
@@ -1023,6 +1032,9 @@ inline void CreateEngineOpSeg(
   }
   // The last segment
   if (end_nid > seg_start) {
+    // huhanpeng
+    opr_name = idx[seg_start].source->attrs.name;
+
     auto& seg = (*opr_segs)[seg_start];
     if (seg_execs.size()) {
       seg = EngineOprSeg{false, end_nid};
