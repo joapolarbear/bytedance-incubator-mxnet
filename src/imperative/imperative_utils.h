@@ -441,6 +441,8 @@ inline void PushFCompute(const FCompute& fn,
     0, 
     op->name.c_str());
     // attrs.name.c_str()); // huhanpeng: modified for profiling
+  // std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
+            // << std::endl << std::flush;
 }
 
 inline void PushFComputeEx(const FComputeEx& fn,
@@ -480,6 +482,8 @@ inline void PushFComputeEx(const FComputeEx& fn,
                             op->name.c_str());
                             // attrs.name.c_str()); // huhanpeng: modified for profiling
   }
+  // std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
+            // << std::endl << std::flush;
 }
 
 inline void PushOperator(const OpStatePtr& state,
@@ -502,6 +506,9 @@ inline void PushOperator(const OpStatePtr& state,
   ExecType exec_type = fexec_type.count(op) ? fexec_type[op](attrs) : ExecType::kSync;
   std::vector<NDArray> inputs, outputs;
   DerefInputOutput(p_inputs, p_outputs, &inputs, &outputs);
+
+  // std::cout << "src/imperative/imperative_utils.h:PushOperator" 
+            // << std::endl << std::flush;
 
   auto fcompute =
       common::GetFCompute<FStatefulCompute>(op, "FStatefulCompute", ctx);
@@ -965,6 +972,10 @@ inline Engine::OprHandle CreateEngineOp(
     }
   };
 
+  //huhanpeng
+  std::cout << "src/imperative_utils.h:CreateEngineOp, call NewOperator to create "
+            << opr_name << std::endl << std::flush;
+
   return Engine::Get()->NewOperator(
       exec_fun, use_vars, mutate_vars, FnProperty::kNormal, opr_name.c_str()); // huhanpeng: add the name, modified for profiling
 }
@@ -983,6 +994,7 @@ inline void CreateEngineOpSeg(
 
   // huhanpeng: Used to change output names for profiling
   std::string opr_name;
+  std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg" << std::endl << std::flush;
 
   for (size_t nid = start_nid; nid < end_nid; ++nid) {
     const auto& node = idx[nid];
@@ -1001,7 +1013,7 @@ inline void CreateEngineOpSeg(
     if (stop && nid > seg_start) {
       // huhanpeng:
       opr_name = idx[seg_start].source->attrs.name;
-      
+
       auto& seg = (*opr_segs)[seg_start];
       if (seg_execs.size()) {
         seg = EngineOprSeg{false, nid};
@@ -1017,6 +1029,9 @@ inline void CreateEngineOpSeg(
 
     // huhanpeng:
     opr_name = node.source->attrs.name;
+    std::cout << "source->attrs.name: " << node.source->attrs.name
+              << " source->op()->name: " << node.source->op()->name << std::endl
+              << std::flush;
 
     auto& seg = (*opr_segs)[nid];
     if (!valid) {
