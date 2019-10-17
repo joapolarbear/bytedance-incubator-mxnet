@@ -814,15 +814,15 @@ OpStatePtr CachedOp::StaticForward(
   }
 
   //huhanpeng: here
-  const auto& opr_seg = state.opr_segs[0];
-  if (opr_seg.opr != nullptr) {
-    auto temp = static_cast<ThreadedOpr*>(opr_seg.opr)
-    std::cout << "src/imperative/cached_op.cc: StaticForward: " 
-              << temp->opr_name << std::endl << std::flush;
-  } else {
-    std::cout << "src/imperative/cached_op.cc: StaticForward: " 
-              << "opr_seg.opr nullptr" << std::endl << std::flush;
-  }
+  // const auto& opr_seg = state.opr_segs[0];
+  // if (opr_seg.opr != nullptr) {
+  //   auto temp = static_cast<ThreadedOpr*>(opr_seg.opr)
+  //   std::cout << "src/imperative/cached_op.cc: StaticForward: " 
+  //             << temp->opr_name << std::endl << std::flush;
+  // } else {
+  //   std::cout << "src/imperative/cached_op.cc: StaticForward: " 
+  //             << "opr_seg.opr nullptr" << std::endl << std::flush;
+  // }
 
 
   StaticRunOps(default_ctx, g, state_ptr, arrays, 0, idx.num_nodes());
