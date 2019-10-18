@@ -453,7 +453,7 @@ inline void PushFCompute(const FCompute& fn,
         rctx.get_stream<gpu>()->Wait();
       }
     }, ctx, read_vars, write_vars, FnProperty::kNormal,
-    0, 
+    *iter != "" ? 1 : 0, 
     // op->name.c_str());
     *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
   // std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
@@ -1065,7 +1065,8 @@ inline void CreateEngineOpSeg(
 
     // huhanpeng:
     opr_name = node.source->attrs.name;
-    std::cout << "source->attrs.name:" << node.source->attrs.name
+    std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
+              << " source->attrs.name:" << node.source->attrs.name
               << " source->op()->name:" << node.source->op()->name 
               << " valid:" << valid << " is_async:" << is_async
               <<" stop && nid > seg_start:" << (stop && nid > seg_start)
@@ -1087,6 +1088,10 @@ inline void CreateEngineOpSeg(
   if (end_nid > seg_start) {
     // huhanpeng
     opr_name = idx[seg_start].source->attrs.name;
+    std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
+              << " source->attrs.name:" << opr_name
+              << " seg_execs.size():" << seg_execs.size()
+              << std::endl << std::flush;
 
     auto& seg = (*opr_segs)[seg_start];
     if (seg_execs.size()) {
