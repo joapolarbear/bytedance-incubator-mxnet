@@ -413,10 +413,12 @@ inline void PushFCompute(const FCompute& fn,
 
   // huhanpeng
   auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
+  if(*iter != "" ){
+    std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
             << " attrs.name:" << attrs.name
-            << " iter" << iter->c_str()
+            << " iter:" << iter->c_str()
             << std::endl << std::flush;
+  }
 
   bool is_train = Imperative::Get()->is_training();
   bool need_grad = Imperative::Get()->is_recording();
@@ -453,7 +455,7 @@ inline void PushFCompute(const FCompute& fn,
     }, ctx, read_vars, write_vars, FnProperty::kNormal,
     0, 
     // op->name.c_str());
-    iter->c_str()); // huhanpeng: modified for profiling
+    *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
   // std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
             // << std::endl << std::flush;
 }
@@ -472,10 +474,12 @@ inline void PushFComputeEx(const FComputeEx& fn,
 
   // huhanpeng
   auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
+  if(*iter != "" ){
+    std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
             << " attrs.name:" << attrs.name
-            << " iter" << iter->c_str()
+            << " iter:" << iter->c_str()
             << std::endl << std::flush;
+  }
 
   bool is_train = Imperative::Get()->is_training();
   bool need_grad = Imperative::Get()->is_recording();
@@ -500,7 +504,7 @@ inline void PushFComputeEx(const FComputeEx& fn,
     Engine::Get()->PushSync(run, ctx, read_vars, write_vars, FnProperty::kNormal,
                             0, 
                             // op->name.c_str());
-                            iter->c_str()); // huhanpeng: modified for profiling
+                            *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
   }
   // std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
             // << std::endl << std::flush;
@@ -531,10 +535,12 @@ inline void PushOperator(const OpStatePtr& state,
   // std::cout << "src/imperative/imperative_utils.h:PushOperator" 
             // << std::endl << std::flush;
   auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  std::cout << "src/imperative/imperative_utils.h:PushOperator" 
+  if(*iter != "" ){
+    std::cout << "src/imperative/imperative_utils.h:PushOperator" 
             << " attrs.name:" << attrs.name
-            << " iter" << iter->c_str()
+            << " iter:" << iter->c_str()
             << std::endl << std::flush;
+  }
 
   auto fcompute =
       common::GetFCompute<FStatefulCompute>(op, "FStatefulCompute", ctx);
@@ -564,13 +570,13 @@ inline void PushOperator(const OpStatePtr& state,
           [=](RunContext rctx) { run(rctx, engine::CallbackOnComplete()); },
           ctx, read_vars, write_vars, FnProperty::kNormal, 0,
           // op->name.c_str());
-          iter->c_str()); // huhanpeng: modified for profiling
+          *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(run, ctx, read_vars, write_vars,
                                FnProperty::kAsync, 0,
                                // op->name.c_str());
-                               iter->c_str()); // huhanpeng: modified for profiling
+                               *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
     }
   } else {
     CHECK(fcompute != nullptr)
@@ -616,14 +622,14 @@ inline void PushOperator(const OpStatePtr& state,
           }, ctx, read_vars, write_vars, FnProperty::kNormal,
           0, 
           // op->name.c_str());
-          iter->c_str()); // huhanpeng: modified for profiling
+          *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(
           run, ctx, read_vars, write_vars, FnProperty::kAsync,
           0, 
           // op->name.c_str());
-          iter->c_str()); // huhanpeng: modified for profiling
+          *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
     }
   }
 }
