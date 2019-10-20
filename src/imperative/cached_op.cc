@@ -630,6 +630,12 @@ void CachedOp::StaticInitExec(
       for (size_t j = 0; !skip && j < idx[i].source->num_outputs(); ++j) {
         skip = state.dynamic_entries[idx.entry_id(i, j)];
       }
+      
+      std::cout << "src/imperative/cached_op.cc:StaticInitExec"
+                << " op:" << idx[i].source->attrs.name
+                << " skip:" << skip
+                << std::endl << std::flush;
+        
       if (skip) continue;
       SetupOpExec(g, i, state.execs[i], state.arrays, state.array_reqs);
     }
