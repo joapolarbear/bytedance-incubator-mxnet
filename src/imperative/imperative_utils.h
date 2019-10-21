@@ -472,14 +472,14 @@ inline void PushFComputeEx(const FComputeEx& fn,
                     const std::vector<OpReqType>& req) {
   static auto& fexec_type = nnvm::Op::GetAttr<FExecType>("FExecType");
 
-  // huhanpeng
-  auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  if(*iter != "" ){
-    std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
-            << " attrs.name:" << attrs.name
-            << " iter:" << iter->c_str()
-            << std::endl << std::flush;
-  }
+  // // huhanpeng
+  // auto iter = cached_seg_opr_names_.insert(attrs.name).first;
+  // if(*iter != "" ){
+  //   std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
+  //           << " attrs.name:" << attrs.name
+  //           << " iter:" << iter->c_str()
+  //           << std::endl << std::flush;
+  // }
 
   bool is_train = Imperative::Get()->is_training();
   bool need_grad = Imperative::Get()->is_recording();
@@ -503,8 +503,8 @@ inline void PushFComputeEx(const FComputeEx& fn,
     CHECK(exec_type == ExecType::kSync);
     Engine::Get()->PushSync(run, ctx, read_vars, write_vars, FnProperty::kNormal,
                             0, 
-                            // op->name.c_str());
-                            *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
+                            op->name.c_str());
+                            // *iter != "" ? iter->c_str() : op->name.c_str()); // huhanpeng: modified for profiling
   }
   // std::cout << "src/imperative/imperative_utils.h:PushFComputeEx" 
             // << std::endl << std::flush;
@@ -535,12 +535,12 @@ inline void PushOperator(const OpStatePtr& state,
   // std::cout << "src/imperative/imperative_utils.h:PushOperator" 
             // << std::endl << std::flush;
   auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  if(*iter != "" ){
-    std::cout << "src/imperative/imperative_utils.h:PushOperator" 
-            << " attrs.name:" << attrs.name
-            << " iter:" << iter->c_str()
-            << std::endl << std::flush;
-  }
+  // if(*iter != "" ){
+  //   std::cout << "src/imperative/imperative_utils.h:PushOperator" 
+  //           << " attrs.name:" << attrs.name
+  //           << " iter:" << iter->c_str()
+  //           << std::endl << std::flush;
+  // }
 
   auto fcompute =
       common::GetFCompute<FStatefulCompute>(op, "FStatefulCompute", ctx);
