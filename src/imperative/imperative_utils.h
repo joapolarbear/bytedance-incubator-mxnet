@@ -413,12 +413,12 @@ inline void PushFCompute(const FCompute& fn,
 
   // huhanpeng
   auto iter = cached_seg_opr_names_.insert(attrs.name).first;
-  if(*iter != "" ){
-    std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
-            << " attrs.name:" << attrs.name
-            << " iter:" << iter->c_str()
-            << std::endl << std::flush;
-  }
+  // if(*iter != "" ){
+  //   std::cout << "src/imperative/imperative_utils.h:PushFCompute" 
+  //           << " attrs.name:" << attrs.name
+  //           << " iter:" << iter->c_str()
+  //           << std::endl << std::flush;
+  // }
 
   bool is_train = Imperative::Get()->is_training();
   bool need_grad = Imperative::Get()->is_recording();
@@ -1005,8 +1005,8 @@ inline Engine::OprHandle CreateEngineOp(
   };
 
   //huhanpeng
-  std::cout << "src/imperative_utils.h:CreateEngineOp, call NewOperator to create "
-            << opr_name << std::endl << std::flush;
+  // std::cout << "src/imperative_utils.h:CreateEngineOp, call NewOperator to create "
+  //           << opr_name << std::endl << std::flush;
   auto iter = cached_seg_opr_names_.insert(opr_name).first;
 
   return Engine::Get()->NewOperator(
@@ -1027,10 +1027,10 @@ inline void CreateEngineOpSeg(
 
   // huhanpeng: Used to change output names for profiling
   std::string opr_name;
-  std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg" 
-            << " start_nid:" << start_nid
-            << " end_nid:" << end_nid
-            << std::endl << std::flush;
+  // std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg" 
+  //           << " start_nid:" << start_nid
+  //           << " end_nid:" << end_nid
+  //           << std::endl << std::flush;
 
   for (size_t nid = start_nid; nid < end_nid; ++nid) {
     const auto& node = idx[nid];
@@ -1065,12 +1065,12 @@ inline void CreateEngineOpSeg(
 
     // huhanpeng:
     opr_name = node.source->attrs.name;
-    std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
-              << " source->attrs.name:" << node.source->attrs.name
-              << " source->op()->name:" << node.source->op()->name 
-              << " valid:" << valid << " is_async:" << is_async
-              <<" stop && nid > seg_start:" << (stop && nid > seg_start)
-              << std::endl << std::flush;
+    // std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
+    //           << " source->attrs.name:" << node.source->attrs.name
+    //           << " source->op()->name:" << node.source->op()->name 
+    //           << " valid:" << valid << " is_async:" << is_async
+    //           <<" stop && nid > seg_start:" << (stop && nid > seg_start)
+    //           << std::endl << std::flush;
 
     auto& seg = (*opr_segs)[nid];
     if (!valid) {
@@ -1088,10 +1088,10 @@ inline void CreateEngineOpSeg(
   if (end_nid > seg_start) {
     // huhanpeng
     opr_name = idx[seg_start].source->attrs.name;
-    std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
-              << " source->attrs.name:" << opr_name
-              << " seg_execs.size():" << seg_execs.size()
-              << std::endl << std::flush;
+    // std::cout << "src/imperative/imperative_utils.h:CreateEngineOpSeg"
+    //           << " source->attrs.name:" << opr_name
+    //           << " seg_execs.size():" << seg_execs.size()
+    //           << std::endl << std::flush;
 
     auto& seg = (*opr_segs)[seg_start];
     if (seg_execs.size()) {
