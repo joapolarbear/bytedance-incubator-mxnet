@@ -519,5 +519,9 @@ void ThreadedEngine::OnCompleteStatic(Engine *engine, void *opr_block_,
   OprBlock::Delete(opr_block);
 }
 
+std::unordered_set<std::string>::iterator ThreadedEngine::GetCachedName(std::string opr_names) {
+  return profiler_->GetCachedName(opr_names);
+}
+
 }  // namespace engine
 }  // namespace mxnet

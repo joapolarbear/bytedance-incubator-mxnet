@@ -121,6 +121,7 @@ void Profiler::SetState(ProfilerState state) {
     set_paused(false);
   } else {
     set_paused(true);
+    cached_seg_opr_names_.clear(); 
   }
 }
 
@@ -148,6 +149,13 @@ void Profiler::SetConfig(int mode,
   }
 }
 
+std::unordered_set<std::string>::iterator Profiler::GetCachedName(std::string opr_names) {
+  if (this->state == Profiler::kRunning){
+    return cached_seg_opr_names_.insert(opr_names).first;
+  } else {
+    return nullptr;
+  }
+}
 /*
  * Docs for tracing format:
  * https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview

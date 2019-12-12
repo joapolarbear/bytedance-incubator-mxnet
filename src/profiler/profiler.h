@@ -304,6 +304,9 @@ class Profiler {
    */
   void DumpProfile(bool perform_cleanup = true);
 
+  // append for unique trace names
+  std::unordered_set<std::string>::iterator GetCachedName(std::string opr_names);
+
   /*! \return the profiler init time, time unit is microsecond (10^-6) s */
   uint64_t MSHADOW_CINLINE GetInitTime() const {
     return init_time_;
@@ -482,6 +485,9 @@ class Profiler {
   std::shared_ptr<dmlc::ThreadGroup> thread_group_ = std::make_shared<dmlc::ThreadGroup>();
   /* !\brief pids */
   std::unordered_set<uint32_t> process_ids_;
+
+  // cached segment operator name (needs a longer lifecycle than cached_seg_opr_)
+  static std::unordered_set<std::string> cached_seg_opr_names_;
 };
 
 #ifdef MXNET_USE_VTUNE
