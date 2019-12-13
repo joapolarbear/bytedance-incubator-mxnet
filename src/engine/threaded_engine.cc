@@ -519,7 +519,7 @@ void ThreadedEngine::OnCompleteStatic(Engine *engine, void *opr_block_,
   OprBlock::Delete(opr_block);
 }
 
-std::unordered_set<std::string>::iterator ThreadedEngine::GetCachedName(std::string opr_names) {
+const char *ThreadedEngine::GetCachedName(std::string opr_names) {
   return profiler_->GetCachedName(opr_names);
 }
 

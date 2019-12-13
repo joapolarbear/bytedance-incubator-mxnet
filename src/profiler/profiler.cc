@@ -149,9 +149,9 @@ void Profiler::SetConfig(int mode,
   }
 }
 
-std::unordered_set<std::string>::iterator Profiler::GetCachedName(std::string opr_names) {
-  if (this->state == Profiler::kRunning){
-    return cached_seg_opr_names_.insert(opr_names).first;
+const char *Profiler::GetCachedName(std::string opr_names) {
+  if (this->state_ == Profiler::kRunning){
+    return cached_seg_opr_names_.insert(opr_names).first->c_str();
   } else {
     return nullptr;
   }

@@ -312,7 +312,7 @@ class ThreadedEngine : public Engine {
   }
 
   // append for unique trace names
-  std::unordered_set<std::string>::iterator GetCachedName(std::string opr_names);
+  const char *GetCachedName(std::string opr_names);
 
   ThreadedEngine() {
     engine_info_ = dmlc::GetEnv("MXNET_ENGINE_INFO", false);

@@ -223,6 +223,9 @@ class NaiveEngine final : public Engine {
     shutdown_phase_.store(true);
   }
 
+  const char *GetCachedName(std::string opr_names) override {
+  }
+
  private:
   // callback to oncomplete
   static void OnComplete(Engine *engine, void *param,

@@ -440,8 +440,8 @@ inline void PushFCompute(const FCompute& fn,
         rctx.get_stream<gpu>()->Wait();
       }
     }, ctx, read_vars, write_vars, FnProperty::kNormal,
-    iter != nullptr && *iter != "" ? 1 : 0,                              // change the priority
-    iter != nullptr && *iter != "" ? iter->c_str() : op->name.c_str());  // append attribute name to make profiling unique
+    iter ? 1 : 0,                              // change the priority
+    iter ? iter : op->name.c_str());  // append attribute name to make profiling unique
 }
 
 inline void PushFComputeEx(const FComputeEx& fn,
@@ -502,8 +502,6 @@ inline void PushOperator(const OpStatePtr& state,
   std::vector<NDArray> inputs, outputs;
   DerefInputOutput(p_inputs, p_outputs, &inputs, &outputs);
 
-  auto iter = Engine::Get()->GetCachedName(attrs.name);
-
   auto fcompute =
       common::GetFCompute<FStatefulCompute>(op, "FStatefulCompute", ctx);
   auto fcompute_ex =
@@ -530,11 +528,11 @@ inline void PushOperator(const OpStatePtr& state,
     } else if (exec_type == ExecType::kSync) {
       Engine::Get()->PushSync(
           [=](RunContext rctx) { run(rctx, engine::CallbackOnComplete()); },
-          ctx, read_vars, write_vars, FnProperty::kNormal, 0, iter != nullptr && *iter != "" ? iter->c_str() : op->name.c_str());  // append attribute name to make profiling unique
+          ctx, read_vars, write_vars, FnProperty::kNormal, 0, op->name.c_str());
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(run, ctx, read_vars, write_vars,
-                               FnProperty::kAsync, 0, iter != nullptr && *iter != "" ? iter->c_str() : op->name.c_str());  // append attribute name to make profiling unique
+                               FnProperty::kAsync, 0, op->name.c_str());
     }
   } else {
     CHECK(fcompute != nullptr)
@@ -578,12 +576,12 @@ inline void PushOperator(const OpStatePtr& state,
           [=](RunContext rctx) {
             run(rctx, engine::CallbackOnComplete());
           }, ctx, read_vars, write_vars, FnProperty::kNormal,
-          0, iter != nullptr && *iter != "" ? iter->c_str() : op->name.c_str());  // append attribute name to make profiling unique
+          0, op->name.c_str());
     } else {
       CHECK(exec_type == ExecType::kAsync);
       Engine::Get()->PushAsync(
           run, ctx, read_vars, write_vars, FnProperty::kAsync,
-          0, iter != nullptr && *iter != "" ? iter->c_str() : op->name.c_str());  // append attribute name to make profiling unique
+          0, op->name.c_str());
     }
   }
 }
@@ -961,7 +959,7 @@ inline Engine::OprHandle CreateEngineOp(
   auto iter = Engine::Get()->GetCachedName(opr_name);
 
   return Engine::Get()->NewOperator(
-      exec_fun, use_vars, mutate_vars, FnProperty::kNormal, iter->c_str());  // append attribute name to make profiling unique
+      exec_fun, use_vars, mutate_vars, FnProperty::kNormal, iter);  // append attribute name to make profiling unique
 }
 
 inline void CreateEngineOpSeg(
