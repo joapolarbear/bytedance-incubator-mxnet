@@ -274,6 +274,11 @@ class MXNET_API Engine {
   }
 
   /*!
+   * \brief append for unique trace names. 
+  */
+  virtual std::unordered_set<std::string>::iterator GetCachedName(std::string opr_names) = 0;
+
+  /*!
    * \brief factory function to create OnComplete callback.
    * \param callback th static callback function.
    * \param param the paramter passed to callback.
