@@ -224,6 +224,7 @@ class NaiveEngine final : public Engine {
   }
 
   const char *GetCachedName(std::string opr_names) override {
+    return nullptr;
   }
 
  private:
