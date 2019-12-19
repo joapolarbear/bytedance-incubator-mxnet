@@ -59,6 +59,7 @@ struct EngineOprSeg {
 };
 
 using MemoryPlanVector = std::vector<MemoryPlanInfo>;
+using CachedOpMonCallback = std::function<void(const char*, const char*, void*)>;
 
 // cached segment operator name (needs a longer lifecycle than cached_seg_opr_)
 static std::unordered_set<std::string> cached_seg_opr_names_;
@@ -1044,7 +1045,9 @@ void RunGraph(const bool retain_graph,
               std::vector<OpStatePtr> *p_states,
               const DispatchModeVector &dispatch_modes,
               bool recording,
-              mxnet::ShapeVector *shapes = nullptr);
+              mxnet::ShapeVector *shapes = nullptr,
+              const CachedOpMonCallback& callback = nullptr,
+              const bool monitor_all_ = false);
 
 void NaiveRunGraph(const bool retain_graph,
                    const Context& default_ctx,
@@ -1056,7 +1059,9 @@ void NaiveRunGraph(const bool retain_graph,
                    std::vector<OpStatePtr> *p_states,
                    const DispatchModeVector &dispatch_modes,
                    bool recording,
-                   mxnet::ShapeVector *shapes);
+                   mxnet::ShapeVector *shapes,
+                   const CachedOpMonCallback& callback = nullptr,
+                   const bool monitor_all_ = false);
 
 }  // namespace imperative
 }  // namespace mxnet

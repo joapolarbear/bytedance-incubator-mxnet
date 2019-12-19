@@ -22,6 +22,7 @@ import ctypes as _ctypes
 import numpy as np
 from ..ndarray_doc import _build_doc
 from libc.stdint cimport uint32_t, int64_t
+from ..base import _LIB
 
 include "./base.pyi"
 
@@ -69,6 +70,10 @@ def _set_ndarray_class(cls):
     global _ndarray_cls
     _ndarray_cls = cls
 
+def _monitor_callback_wrapper(callback):
+    def callback_handle(name, opr_name, arr, _):
+        callback(name, opr_name, arr)
+    return callback_handle
 
 cdef NewArray(NDArrayHandle handle, int stype=-1):
     """Create a new array given handle"""
@@ -95,6 +100,9 @@ cdef class CachedOp:
                 return _ctypes.cast(<unsigned long long>self.chandle, _ctypes.c_void_p)
         def __set__(self, value):
             self._set_handle(value)
+
+    cdef int is_np_sym
+    cdef readonly object mhandle
 
     def __init__(self, sym, flags=()):
         cdef vector[string] s_flag_keys
@@ -158,6 +166,14 @@ cdef class CachedOp:
         else:
             return [NewArray(p_output_vars[i], p_output_stypes[i]) for i in range(num_output)]
 
+    def _register_op_hook(self, callback, monitor_all=False):
+        cb_type = _ctypes.CFUNCTYPE(None, _ctypes.c_char_p, _ctypes.c_char_p, _ctypes.c_void_p, _ctypes.c_void_p)
+        if callback:
+            self.mhandle = cb_type(_monitor_callback_wrapper(callback))
+        chandle = _ctypes.cast(<unsigned long long>self.chandle, _ctypes.c_void_p)
+        CALL(_LIB.MXCachedOpRegisterOpHook(chandle,
+                                           self.mhandle,
+                                           _ctypes.c_int(monitor_all)))
 
 def _imperative_invoke(handle, ndargs, keys, vals, out):
     """cython implementation of imperative invoke wrapper"""

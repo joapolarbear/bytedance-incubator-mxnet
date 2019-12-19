@@ -792,6 +792,16 @@ inline void ConvertToLegacyShape(mxnet::ShapeVector* shapes) {
   }
 }
 
+void ExecuteMonInputCallback(
+    const nnvm::IndexedGraph &idx, const std::vector<NDArray *> &state_arrays,
+    size_t nid, const std::function<void(const char *, const char *, void *)>
+                    &monitor_callback);
+
+void ExecuteMonOutputCallback(
+    const nnvm::IndexedGraph &idx, const std::vector<NDArray *> &state_arrays,
+    size_t nid, const std::function<void(const char *, const char *, void *)>
+                    &monitor_callback);
+
 }  // namespace common
 }  // namespace mxnet
 #endif  // MXNET_COMMON_UTILS_H_

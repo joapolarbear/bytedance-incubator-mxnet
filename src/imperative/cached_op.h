@@ -74,6 +74,8 @@ struct CachedOpConfig : public dmlc::Parameter<CachedOpConfig> {
 };
 
 class CachedOp {
+  using CachedOpMonCallback =
+      std::function<void(const char *, const char *, void *)>;
  public:
   CachedOp(
       const nnvm::Symbol& sym,
@@ -134,6 +136,8 @@ class CachedOp {
     sym.outputs = fwd_graph_.outputs;
     return sym;
   }
+  void RegisterOpHook(const CachedOp::CachedOpMonCallback& callback,
+                      bool monitor_all = false);
 
  private:
   struct GraphInfo;
@@ -203,6 +207,9 @@ class CachedOp {
   std::vector<bool> save_inputs_, save_outputs_;
   std::vector<OpReqType> bwd_output_reqs_;
 
+  std::function<void(const char*, const char*, NDArrayHandle)> monitor_callback_{nullptr};
+  bool monitor_all_{false};
+  
   std::mutex mutex_;
   std::unordered_map<Context, std::vector<OpStatePtr> > cached_op_states_;
 };
