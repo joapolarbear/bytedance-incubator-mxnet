@@ -241,7 +241,7 @@ struct ThreadedOpr final : public Opr,
   /*! \brief The property of the operator */
   FnProperty prop;
   /*! \brief The name of the operator */
-  const char* opr_name{nullptr};
+  const std::string opr_name{""};
   /*!
    * \brief Whether this is an temporary operator
    *        that can be deleted right after the operation completed.
@@ -286,7 +286,7 @@ class ThreadedEngine : public Engine {
                            std::vector<VarHandle> const& const_vars,
                            std::vector<VarHandle> const& mutable_vars,
                            FnProperty prop = FnProperty::kNormal,
-                           const char* opr_name = nullptr,
+                           const std::string opr_name = "",
                            bool wait = false) override;
   void DeleteOperator(OprHandle op) override;
   void Push(OprHandle op, Context exec_ctx, int priority = 0, bool profiling = false) override;
@@ -295,14 +295,14 @@ class ThreadedEngine : public Engine {
                  std::vector<VarHandle> const& mutable_vars,
                  FnProperty prop = FnProperty::kNormal,
                  int priority = 0,
-                 const char* opr_name = nullptr,
+                 const std::string opr_name = "",
                  bool wait = false) override;
   void PushSync(SyncFn exec_fn, Context exec_ctx,
                 std::vector<VarHandle> const& const_vars,
                 std::vector<VarHandle> const& mutable_vars,
                 FnProperty prop = FnProperty::kNormal,
                 int priority = 0,
-                const char* opr_name = nullptr) override;
+                const std::string opr_name = "") override;
   void DeleteVariable(SyncFn delete_fn, Context exec_ctx, VarHandle var) override;
   void WaitForVar(VarHandle var) override;
   void WaitForAll() override;
@@ -350,7 +350,7 @@ class ThreadedEngine : public Engine {
    */
   void ExecuteOprBlock(RunContext run_ctx, OprBlock* opr_block) {
     ThreadedOpr* threaded_opr = opr_block->opr;
-    if (opr_block->profiling && threaded_opr->opr_name) {
+    if (opr_block->profiling && threaded_opr->opr_name != "") {
       std::unique_ptr<profiler::ProfileOperator::Attributes> attrs;
       if (profiler_->AggregateEnabled()) {
         attrs.reset(new profiler::ProfileOperator::Attributes());

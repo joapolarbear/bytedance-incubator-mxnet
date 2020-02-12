@@ -857,7 +857,7 @@ struct ProfileEvent  : public ProfileDuration {
    * \brief Constructor
    * \param name Name of the event
    */
-  explicit inline ProfileEvent(const char *name)
+  explicit inline ProfileEvent(const std::string name)
     : name_(name)
       , categories_("event") {
     VTUNE_ONLY_CODE(vtune_event_ = vtune::VTuneEvent::registry_.get(name));
@@ -1145,7 +1145,7 @@ struct ProfileOperator : public ProfileEvent {
    * \brief Constructor
    * \param name Name of the operator
    */
-  explicit inline ProfileOperator(const char *name, Attributes *attributes)
+  explicit inline ProfileOperator(const std::string name, Attributes *attributes)
     : ProfileEvent(name)
       , as_task_(name, &domain_)
       , name_(name)

@@ -214,7 +214,7 @@ ThreadedOpr* ThreadedEngine::NewOperator(
     std::vector<VarHandle> const& const_vars,
     std::vector<VarHandle> const& mutable_vars,
     FnProperty prop,
-    const char* opr_name,
+    const std::string opr_name,
     bool wait) {
   auto ret = ThreadedOpr::New();
   ret->opr_name = opr_name;
@@ -317,7 +317,7 @@ void ThreadedEngine::PushAsync(AsyncFn fn, Context exec_ctx,
                                std::vector<VarHandle> const& mutable_vars,
                                FnProperty prop,
                                int priority,
-                               const char* opr_name,
+                               const std::string opr_name,
                                bool wait) {
 #if MXNET_USE_CUDA
   if (exec_ctx.dev_mask() == gpu::kDevMask) {
@@ -344,7 +344,7 @@ void ThreadedEngine::PushSync(SyncFn exec_fn, Context exec_ctx,
                               std::vector<VarHandle> const& mutable_vars,
                               FnProperty prop,
                               int priority,
-                              const char* opr_name) {
+                              const std::string opr_name) {
   if (!bulk_size() || prop != FnProperty::kNormal || priority) {
     this->PushAsync([exec_fn](RunContext ctx, CallbackOnComplete on_complete) {
         exec_fn(ctx);
@@ -511,7 +511,7 @@ void ThreadedEngine::OnCompleteStatic(Engine *engine, void *opr_block_,
     auto ex_p = std::make_exception_ptr(*error);
     threaded_opr->opr_exception = std::make_shared<std::exception_ptr>(ex_p);
   }
-  if (opr_block->profiling && threaded_opr->opr_name) {
+  if (opr_block->profiling && threaded_opr->opr_name != "") {
     // record operator end timestamp
     opr_block->opr_profile->stop();
   }
